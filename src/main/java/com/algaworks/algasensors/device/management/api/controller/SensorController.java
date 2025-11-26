@@ -47,9 +47,21 @@ public class SensorController {
     return ResponseEntity.ok(sensorService.update(sensorId,input));
   }
 
+  @PutMapping(value = "/{sensorId}/enable")
+  public ResponseEntity<SensorOutput> enable(@PathVariable TSID sensorId) {
+    return ResponseEntity.ok(sensorService.enable(sensorId));
+  }
+
   @DeleteMapping(value = "/{sensorId}")
   public ResponseEntity<Void> delete(@PathVariable TSID sensorId) {
     sensorService.delete(sensorId);
     return ResponseEntity.noContent().build();
   }
+
+  @DeleteMapping(value = "/{sensorId}/enable")
+  public ResponseEntity<Void> disable(@PathVariable TSID sensorId) {
+    sensorService.disable(sensorId);
+    return ResponseEntity.noContent().build();
+  }
+
 }

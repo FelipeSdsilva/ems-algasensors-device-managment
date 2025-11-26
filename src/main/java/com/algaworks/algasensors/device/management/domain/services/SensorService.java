@@ -73,6 +73,17 @@ public class SensorService {
     }
   }
 
+  @Transactional
+  public SensorOutput enable(TSID sensorId) {
+    try {
+      Sensor sensor = sensorRepository.getReferenceById(new SensorId(sensorId));
+      sensor.setEnable(true);
+      return convertToModel(sensor);
+    } catch (EntityNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
   @Transactional(propagation = Propagation.SUPPORTS)
   public void delete(TSID sensorId) {
 
@@ -80,6 +91,13 @@ public class SensorService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     } else
       sensorRepository.deleteById(new SensorId(sensorId));
+  }
+
+  @Transactional
+  public void disable(TSID sensorId) {
+    Sensor sensor = sensorRepository.findById(new SensorId(sensorId)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    sensor.setEnable(false);
+    sensorRepository.saveAndFlush(sensor);
   }
 
   private SensorOutput convertToModel(Sensor sensor) {
