@@ -38,4 +38,5 @@ public class SensorController {
     URI uri = fromCurrentRequest().path("/{id}").buildAndExpand(sensor.getId()).toUri();
     return ResponseEntity.created(uri).body(sensor);
   }
+
 }
