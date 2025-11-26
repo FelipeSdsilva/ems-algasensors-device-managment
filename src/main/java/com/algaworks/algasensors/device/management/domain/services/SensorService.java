@@ -7,6 +7,7 @@ import com.algaworks.algasensors.device.management.domain.model.Sensor;
 import com.algaworks.algasensors.device.management.domain.model.SensorId;
 import com.algaworks.algasensors.device.management.domain.repositories.SensorRepository;
 import io.hypersistence.tsid.TSID;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class SensorService {
 
@@ -65,18 +68,18 @@ public class SensorService {
       sensorRepository.saveAndFlush(sensor);
 
       return convertToModel(sensor);
-    } catch (RuntimeException e) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+    } catch (EntityNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
   }
 
   @Transactional(propagation = Propagation.SUPPORTS)
   public void delete(TSID sensorId) {
-    try {
+
+    if (!sensorRepository.existsById(new SensorId(sensorId))) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    } else
       sensorRepository.deleteById(new SensorId(sensorId));
-    } catch (RuntimeException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-    }
   }
 
   private SensorOutput convertToModel(Sensor sensor) {
