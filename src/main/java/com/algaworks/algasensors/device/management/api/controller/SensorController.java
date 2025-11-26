@@ -38,5 +38,14 @@ public class SensorController {
     URI uri = fromCurrentRequest().path("/{id}").buildAndExpand(sensor.getId()).toUri();
     return ResponseEntity.created(uri).body(sensor);
   }
+  @PutMapping(value = "/{sensorId}")
+  public ResponseEntity<SensorOutput> update(@PathVariable TSID sensorId, @RequestBody SensorInput input) {
+    return ResponseEntity.ok(sensorService.update(sensorId,input));
+  }
 
+  @DeleteMapping(value = "/{sensorId}")
+  public ResponseEntity<Void> delete(@PathVariable TSID sensorId) {
+    sensorService.delete(sensorId);
+    return ResponseEntity.noContent().build();
+  }
 }
