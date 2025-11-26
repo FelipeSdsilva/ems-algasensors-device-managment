@@ -1,33 +1,40 @@
 package com.algaworks.algasensors.device.management.api.controller;
 
-import com.algaworks.algasensors.device.management.api.model.SensorInput;
-import com.algaworks.algasensors.device.management.common.IdGenerator;
-import com.algaworks.algasensors.device.management.domain.model.Sensor;
+import com.algaworks.algasensors.device.management.api.model.input.SensorInput;
+import com.algaworks.algasensors.device.management.api.model.output.SensorOutput;
+import com.algaworks.algasensors.device.management.domain.services.SensorService;
+import io.hypersistence.tsid.TSID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/sensors")
 public class SensorController {
 
+  private final SensorService sensorService;
+
+  @GetMapping
+  public ResponseEntity<Page<SensorOutput>> search(@PageableDefault Pageable pageable){
+    return ResponseEntity.ok(sensorService.search(pageable));
+  }
+
+  @GetMapping(value = "/{sensorId}")
+  public ResponseEntity<SensorOutput> getOne(@PathVariable TSID sensorId) {
+    return ResponseEntity.ok(sensorService.getOne(sensorId));
+  }
+
   @PostMapping
-  public ResponseEntity<Sensor> create(@RequestBody SensorInput input) {
-    Sensor sensor = Sensor.builder()
-        .id(IdGenerator.generateTSID())
-        .name(input.getName())
-        .ip(input.getIp())
-        .location(input.getLocation())
-        .protocol(input.getProtocol())
-        .model(input.getModel())
-        .enable(false)
-        .build();
+  public ResponseEntity<SensorOutput> create(@RequestBody SensorInput input) {
+    SensorOutput sensor = sensorService.create(input);
     URI uri = fromCurrentRequest().path("/{id}").buildAndExpand(sensor.getId()).toUri();
     return ResponseEntity.created(uri).body(sensor);
   }
