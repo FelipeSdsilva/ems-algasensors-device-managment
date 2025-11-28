@@ -48,7 +48,7 @@ public class SensorController {
   }
 
   @PutMapping(value = "/{sensorId}/enable")
-  public ResponseEntity<SensorOutput> enable(@PathVariable TSID sensorId) {
+  public ResponseEntity<Void> enable(@PathVariable TSID sensorId) {
     sensorService.enable(sensorId);
     return ResponseEntity.noContent().build();
   }
