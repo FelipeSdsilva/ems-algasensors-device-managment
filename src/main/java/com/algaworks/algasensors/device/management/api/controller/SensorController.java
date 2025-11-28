@@ -26,7 +26,7 @@ public class SensorController {
   private final SensorService sensorService;
 
   @GetMapping
-  public ResponseEntity<Page<SensorOutput>> search(@PageableDefault Pageable pageable){
+  public ResponseEntity<Page<SensorOutput>> search(@PageableDefault Pageable pageable) {
     return ResponseEntity.ok(sensorService.search(pageable));
   }
 
@@ -44,12 +44,13 @@ public class SensorController {
 
   @PutMapping(value = "/{sensorId}")
   public ResponseEntity<SensorOutput> update(@PathVariable TSID sensorId, @Valid @RequestBody SensorInput input) {
-    return ResponseEntity.ok(sensorService.update(sensorId,input));
+    return ResponseEntity.ok(sensorService.update(sensorId, input));
   }
 
   @PutMapping(value = "/{sensorId}/enable")
   public ResponseEntity<SensorOutput> enable(@PathVariable TSID sensorId) {
-    return ResponseEntity.ok(sensorService.enable(sensorId));
+    sensorService.enable(sensorId);
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping(value = "/{sensorId}")

@@ -74,11 +74,11 @@ public class SensorService {
   }
 
   @Transactional
-  public SensorOutput enable(TSID sensorId) {
+  public void enable(TSID sensorId) {
     try {
       Sensor sensor = sensorRepository.getReferenceById(new SensorId(sensorId));
       sensor.setEnable(true);
-      return convertToModel(sensor);
+      sensorRepository.saveAndFlush(sensor);
     } catch (EntityNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
