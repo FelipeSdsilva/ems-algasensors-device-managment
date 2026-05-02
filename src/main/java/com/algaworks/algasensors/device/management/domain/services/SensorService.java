@@ -1,5 +1,6 @@
 package com.algaworks.algasensors.device.management.domain.services;
 
+import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.input.SensorInput;
 import com.algaworks.algasensors.device.management.api.model.output.SensorOutput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
@@ -24,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class SensorService {
 
   private final SensorRepository sensorRepository;
+  private final SensorMonitoringClient monitoringClient;
 
   @Transactional(readOnly = true)
   public Page<SensorOutput> search(Pageable pageable) {
@@ -79,6 +81,7 @@ public class SensorService {
       Sensor sensor = sensorRepository.getReferenceById(new SensorId(sensorId));
       sensor.setEnable(true);
       sensorRepository.saveAndFlush(sensor);
+      monitoringClient.enableMonitoring(sensorId);
     } catch (EntityNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -91,6 +94,8 @@ public class SensorService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     } else
       sensorRepository.deleteById(new SensorId(sensorId));
+
+    monitoringClient.disableMonitoring(sensorId);
   }
 
   @Transactional
@@ -98,6 +103,7 @@ public class SensorService {
     Sensor sensor = sensorRepository.findById(new SensorId(sensorId)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     sensor.setEnable(false);
     sensorRepository.saveAndFlush(sensor);
+    monitoringClient.disableMonitoring(sensorId); 
   }
 
   private SensorOutput convertToModel(Sensor sensor) {

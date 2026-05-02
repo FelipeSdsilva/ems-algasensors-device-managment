@@ -1,6 +1,10 @@
 server:
   port: ${SERVER_PORT:8080}
 
+external-apis:
+  monitoring-base-url: ${BASE_URL}
+
+
 spring:
 
   jpa:

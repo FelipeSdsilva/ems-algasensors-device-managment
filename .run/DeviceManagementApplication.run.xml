@@ -5,6 +5,7 @@
       <env name="tsid.node.count" value="64" />
       <env name="SERVER_PORT" value="8080" />
       <env name="APP_PROFILE" value="test" />
+      <env name="BASE_URL" value="http://localhost:8082" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="com.algaworks.algasensors.device.management.DeviceManagementApplication" />
     <module name="device-management.main" />
