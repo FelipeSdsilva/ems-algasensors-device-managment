@@ -2,6 +2,8 @@ package com.algaworks.algasensors.device.management.domain.services;
 
 import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.input.SensorInput;
+import com.algaworks.algasensors.device.management.api.model.output.SensorDetailOutput;
+import com.algaworks.algasensors.device.management.api.model.output.SensorMonitoringOutput;
 import com.algaworks.algasensors.device.management.api.model.output.SensorOutput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
 import com.algaworks.algasensors.device.management.domain.model.Sensor;
@@ -37,6 +39,17 @@ public class SensorService {
     Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     return convertToModel(sensor);
+  }
+
+  public SensorDetailOutput getOneWithDetail(TSID sensorId) {
+    Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    SensorMonitoringOutput detail = monitoringClient.getDetail(sensorId);
+    SensorOutput sensorOutput = convertToModel(sensor);
+    return SensorDetailOutput.builder()
+            .monitoring(detail)
+            .sensor(sensorOutput)
+            .build();
   }
 
   @Transactional

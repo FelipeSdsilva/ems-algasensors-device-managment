@@ -1,10 +1,22 @@
 package com.algaworks.algasensors.device.management.api.client;
 
+import com.algaworks.algasensors.device.management.api.model.output.SensorMonitoringOutput;
 import io.hypersistence.tsid.TSID;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.service.annotation.DeleteExchange;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PutExchange;
 
+@HttpExchange("/api/sensors/{sensorId}/monitoring")
 public interface SensorMonitoringClient {
 
-  void enableMonitoring(TSID tsid);
+    @PutExchange("/enable")
+    void enableMonitoring(@PathVariable TSID tsid);
 
-  void disableMonitoring(TSID tsid);
+    @DeleteExchange("/enable")
+    void disableMonitoring(@PathVariable TSID tsid);
+
+    @GetExchange
+    SensorMonitoringOutput getDetail(@PathVariable TSID sensorId);
 }

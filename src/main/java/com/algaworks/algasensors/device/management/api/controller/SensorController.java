@@ -1,6 +1,7 @@
 package com.algaworks.algasensors.device.management.api.controller;
 
 import com.algaworks.algasensors.device.management.api.model.input.SensorInput;
+import com.algaworks.algasensors.device.management.api.model.output.SensorDetailOutput;
 import com.algaworks.algasensors.device.management.api.model.output.SensorOutput;
 import com.algaworks.algasensors.device.management.domain.services.SensorService;
 import io.hypersistence.tsid.TSID;
@@ -33,6 +34,11 @@ public class SensorController {
   @GetMapping(value = "/{sensorId}")
   public ResponseEntity<SensorOutput> getOne(@PathVariable TSID sensorId) {
     return ResponseEntity.ok(sensorService.getOne(sensorId));
+  }
+
+  @GetMapping(value = "/{sensorId}/detail")
+  public ResponseEntity<SensorDetailOutput> getOneWithDetail(@PathVariable TSID sensorId) {
+    return ResponseEntity.ok(sensorService.getOneWithDetail(sensorId));
   }
 
   @PostMapping
